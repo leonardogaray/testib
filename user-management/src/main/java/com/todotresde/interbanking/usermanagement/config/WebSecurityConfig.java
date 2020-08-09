@@ -22,7 +22,6 @@ public abstract class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    /*
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and()
@@ -38,7 +37,6 @@ public abstract class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().and()
                 .csrf().disable();
     }
-    */
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

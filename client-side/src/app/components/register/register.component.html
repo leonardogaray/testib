@@ -1,1 +1,33 @@
-<p>register works!</p>
+<div class="container">
+    <div class="card card-container">
+        <img src="" />
+        <form name="form-signin" (ngSubmit)="f.form.valid && register()" #f="ngForm">
+            <div class="alert alert-danger" role="alert" *ngIf="errorMessage">
+                {{errorMessage}}
+            </div>
+            <div class="form-group" [ngClass]="{'has-error': f.submitted && !name.valid}">
+                <label for="name">Full name</label>
+                <input type="text" name="name" class="form-control" id="name" [(ngModel)]="user.name" #name="ngModel" required/>
+                <div class="alert alert-danger" *ngIf="f.submitted && !name.valid">
+                    Full name required
+                </div>
+            </div>
+            <div class="form-group" [ngClass]="{'has-error': f.submitted && !username.valid}">
+                <label for="username">Username</label>
+                <input type="text" name="username" class="form-control" id="username" [(ngModel)]="user.username" #username="ngModel" required/>
+                <div class="alert alert-danger" *ngIf="f.submitted && !username.valid">
+                    Username required
+                </div>
+            </div>
+            <div class="form-group" [ngClass]="{'has-error': f.submitted && !password.valid}">
+                <label for="password">Pasword</label>
+                <input type="text" name="password" class="form-control" id="password" [(ngModel)]="user.password" #password="ngModel" required/>
+                <div class="alert alert-danger" *ngIf="f.submitted && !password.valid">
+                    Username required
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        </form>
+        <a href="/login" class="btn btn-link">I have an Account</a>
+    </div>
+</div>
