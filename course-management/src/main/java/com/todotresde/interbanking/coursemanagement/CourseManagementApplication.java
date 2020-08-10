@@ -1,5 +1,7 @@
 package com.todotresde.interbanking.coursemanagement;
 
+import com.todotresde.interbanking.coursemanagement.service.FileUploadService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -8,16 +10,37 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Resource;
+
+/**
+ * The type Course management application.
+ */
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-public class CourseManagementApplication {
+public class CourseManagementApplication implements CommandLineRunner {
 
-	public static void main(String[] args) {
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(String[] args) {
 		SpringApplication.run(CourseManagementApplication.class, args);
 	}
 
-	@Bean
+    /**
+     * The File upload service.
+     */
+    @Resource
+	FileUploadService fileUploadService;
+
+    /**
+     * Cors configurer web mvc configurer.
+     *
+     * @return the web mvc configurer
+     */
+    @Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer(){
 			@Override
@@ -25,5 +48,11 @@ public class CourseManagementApplication {
 				registry.addMapping("/**").allowedOrigins("*");
 			}
 		};
+	}
+
+	@Override
+	public void run(String... arg) throws Exception {
+		fileUploadService.deleteAll();
+		fileUploadService.init();
 	}
 }

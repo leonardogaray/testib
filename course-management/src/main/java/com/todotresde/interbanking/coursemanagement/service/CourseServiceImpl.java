@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * The type Course service.
+ */
 @Service
 public class CourseServiceImpl implements CourseService{
     @Autowired

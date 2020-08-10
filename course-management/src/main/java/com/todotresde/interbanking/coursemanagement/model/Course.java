@@ -5,6 +5,9 @@ import lombok.Data;
 import javax.persistence.*;
 import java.time.LocalDate;
 
+/**
+ * The type Course.
+ */
 @Data
 @Entity
 @Table(name = "course")
