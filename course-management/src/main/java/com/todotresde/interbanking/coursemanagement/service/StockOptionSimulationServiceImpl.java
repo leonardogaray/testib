@@ -42,7 +42,8 @@ public class StockOptionSimulationServiceImpl implements StockOptionSimulationSe
         return strategies;
     }
 
-    private List<StockOption> readFile(String filename){
+    @Override
+    public List<StockOption> readFile(String filename){
         Path file = root.resolve(filename);
         BufferedReader bufferedReader = null;
         String line = "";

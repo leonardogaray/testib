@@ -9,6 +9,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { DetailComponent } from './components/detail/detail.component';
 import { HomeComponent } from './components/home/home.component';
 import { StockOptionLoadComponent } from './components/stockOptionLoad/stockOptionLoad.component';
+import { ChartsModule } from 'ng2-charts';
 
 import {HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -28,7 +29,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

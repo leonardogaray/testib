@@ -1,8 +1,10 @@
 package com.todotresde.interbanking.coursemanagement.service;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Stream;
 
+import com.todotresde.interbanking.coursemanagement.model.StockOption;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,4 +45,6 @@ public interface FileUploadService {
     public Stream<Path> loadAll();
 
     public void generateCSV(String filename);
+
+    public List<StockOption> getCSV(String filename);
 }

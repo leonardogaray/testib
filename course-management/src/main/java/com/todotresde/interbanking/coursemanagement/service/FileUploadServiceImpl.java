@@ -15,6 +15,8 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import com.todotresde.interbanking.coursemanagement.commons.CSVUtils;
+import com.todotresde.interbanking.coursemanagement.model.StockOption;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUploadServiceImpl implements FileUploadService {
 
     private final Path root = Paths.get("uploads");
+
+    @Autowired
+    private StockOptionSimulationService stockOptionSimulationService;
 
     @Override
     public void init() {
@@ -84,8 +89,9 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         HashMap<String, Float> stockOptions = new HashMap<>();
         stockOptions.put("YPF", 200f);
-        //stockOptions.put("TS", 10f);
-        //stockOptions.put("GGAL", 280f);
+        stockOptions.put("TS", 10f);
+        stockOptions.put("GGAL", 280f);
+        stockOptions.put("ML", 320f);
 
         try {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file.toString()), StandardCharsets.UTF_8);
@@ -113,6 +119,11 @@ public class FileUploadServiceImpl implements FileUploadService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<StockOption> getCSV(String filename){
+        return stockOptionSimulationService.readFile(filename);
     }
 
 }

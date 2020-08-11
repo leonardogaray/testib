@@ -1,5 +1,6 @@
 package com.todotresde.interbanking.coursemanagement.service;
 
+import com.todotresde.interbanking.coursemanagement.model.StockOption;
 import com.todotresde.interbanking.coursemanagement.model.Strategy;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,4 +21,5 @@ public interface StockOptionSimulationService {
      */
     public List<Strategy> simulate(String filename);
 
+    public List<StockOption> readFile(String filename);
 }

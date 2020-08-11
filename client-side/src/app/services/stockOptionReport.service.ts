@@ -11,7 +11,10 @@ let API_URL = 'http://localhost:8001/service/';
 export class StockOptionReportService {
 
   constructor(private http: HttpClient) { 
-
+    
   }
 
+  getCSV(filename: string): Observable<any> {
+    return this.http.get(API_URL + 'files/getCSV/' + filename);
+  }
 }

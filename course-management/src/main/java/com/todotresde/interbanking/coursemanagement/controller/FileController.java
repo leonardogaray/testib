@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.todotresde.interbanking.coursemanagement.message.ResponseMessage;
 import com.todotresde.interbanking.coursemanagement.model.FileInfo;
+import com.todotresde.interbanking.coursemanagement.model.StockOption;
 import com.todotresde.interbanking.coursemanagement.service.FileUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -82,9 +83,15 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @GetMapping("/service/simulate/generateCSV/{filename:.+}")
+    @GetMapping("/service/files/generateCSV/{filename:.+}")
     public ResponseEntity<?> generateCSV(@PathVariable String filename) {
         fileUploadService.generateCSV(filename);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @GetMapping("/service/files/getCSV/{filename:.+}")
+    public ResponseEntity<?> getCSV(@PathVariable String filename) {
+        List<StockOption> stockOptions = fileUploadService.getCSV(filename);
+        return ResponseEntity.ok(stockOptions);
     }
 }

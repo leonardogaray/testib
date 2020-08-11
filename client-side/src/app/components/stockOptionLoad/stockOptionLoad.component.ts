@@ -3,6 +3,7 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { StockOptionLoadService } from '../../services/stockOptionLoad.service';
 import { FileInfo } from '../../models/fileInfo';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-stock-option-load',
@@ -17,7 +18,7 @@ export class StockOptionLoadComponent implements OnInit {
   message = '';
   fileInfos: Observable<any>;
 
-  constructor(private stockOptionLoadService: StockOptionLoadService) { }
+  constructor(private stockOptionLoadService: StockOptionLoadService, private router: Router) { }
 
   ngOnInit(): void {
     this.fileInfos = this.stockOptionLoadService.getFiles();
@@ -50,7 +51,7 @@ export class StockOptionLoadComponent implements OnInit {
   }
 
   process(file: FileInfo){
-    
+    this.router.navigate(['/stock-option-report/' + file.name]);
   }
 
 }
