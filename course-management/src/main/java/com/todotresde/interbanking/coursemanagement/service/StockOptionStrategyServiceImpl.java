@@ -15,8 +15,10 @@ import java.util.stream.Collectors;
 @Service
 public class StockOptionStrategyServiceImpl implements StockOptionStrategyService{
     @Override
-    public List<StockOptionStrategy> findByBrandIsIn(Collection<StockOptionStrategy> StockOptionStrategies, String brand) {
-        return StockOptionStrategies.stream().filter(stockOptionStrategy -> brand.equals(stockOptionStrategy.getBrand())).collect(Collectors
+    public List<StockOptionStrategy> findByBrandIsInToSell(Collection<StockOptionStrategy> StockOptionStrategies, String brand) {
+        return StockOptionStrategies.stream().filter(stockOptionStrategy -> {
+            return (brand.equals(stockOptionStrategy.getBrand()) && stockOptionStrategy.getSellDate() == null);
+        }).collect(Collectors
                 .toCollection(ArrayList::new));
     }
 }

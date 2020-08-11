@@ -30,18 +30,19 @@ public class StrategyServiceImpl implements StrategyService{
             StockOption currentStockOption = stockOptionService.findByBrandIsIn(currentStockOptions, previousStockOption.getBrand());
 
             if (currentStockOption != null) {
-                if (previousStockOption.getPrice() < currentStockOption.getPrice() * 0.99) {
+                Float priceDifference = previousStockOption.getPrice() - currentStockOption.getPrice();
+                if ( priceDifference > 0 && priceDifference > previousStockOption.getPrice() * 0.01 ) {
                     possibleStockOptionsToBuy.add(currentStockOption);
                 }
 
-                if (previousStockOption.getPrice() * 1.02 > currentStockOption.getPrice()) {
+                if (priceDifference < 0 && Math.abs(priceDifference) > previousStockOption.getPrice() * 0.02) {
                     possibleStockOptionsToSell.add(currentStockOption);
                 }
             }
         }
 
         buyStockOptions(strategy, possibleStockOptionsToBuy);
-        sellStockOptions(strategy, possibleStockOptionsToSell);
+        sellStockOptions(strategy, possibleStockOptionsToSell, false);
     }
 
     @Override
@@ -52,25 +53,31 @@ public class StrategyServiceImpl implements StrategyService{
     }
 
     @Override
-    public void sellStockOptions(Strategy strategy, List<StockOption> stockOptions){
+    public void sellStockOptions(Strategy strategy, List<StockOption> stockOptions, Boolean forceCell){
         for(StockOption stockOption : stockOptions) {
-            sellStockOption(strategy, stockOption);
+            sellStockOption(strategy, stockOption, forceCell);
         }
     }
 
     private void buyStockOption(Strategy strategy, StockOption stockOption){
-        List <StockOptionStrategy> stockOptionStrategies = stockOptionStrategyService.findByBrandIsIn(strategy.getStockOptionStrategies(), stockOption.getBrand());
+        List <StockOptionStrategy> stockOptionStrategies = stockOptionStrategyService.findByBrandIsInToSell(strategy.getStockOptionStrategies(), stockOption.getBrand());
 
-        if(!stockOptionStrategies.isEmpty()) {
+        if(stockOptionStrategies.isEmpty()) {
             Integer numberOfStockOptions = (int) Math.floor(1000 / stockOption.getPrice());
             strategy.setCash(strategy.getCash() - (numberOfStockOptions * stockOption.getPrice()));
             strategy.getStockOptionStrategies().add(new StockOptionStrategy(numberOfStockOptions, stockOption));
+
         }
     }
 
-    private void sellStockOption(Strategy strategy, StockOption stockOption){
+    private void sellStockOption(Strategy strategy, StockOption stockOption, Boolean forceSell){
         strategy.getStockOptionStrategies().forEach(stockOptionStrategy -> {
-            if(stockOption.getBrand().equals(stockOptionStrategy.getBrand())){
+            Boolean mandatoryToSell = forceSell && stockOption.getBrand().equals(stockOptionStrategy.getBrand())
+                    && stockOptionStrategy.getSellDate() == null;
+            Boolean canSell = stockOption.getBrand().equals(stockOptionStrategy.getBrand()) && stockOptionStrategy.getSellDate() == null
+                    && stockOption.getDate().isAfter(stockOptionStrategy.getBuyDate());
+
+            if(mandatoryToSell || canSell){
                 stockOptionStrategy.setSellDate(stockOption.getDate());
                 stockOptionStrategy.setSellPrice(stockOption.getPrice());
                 strategy.setCash(strategy.getCash() + (stockOptionStrategy.getCount() * stockOptionStrategy.getSellPrice()));

@@ -17,6 +17,6 @@ public interface StockOptionStrategyService {
      * @param brand        the brand
      * @return the list
      */
-    public List<StockOptionStrategy> findByBrandIsIn(Collection<StockOptionStrategy> stockOptions, String brand);
+    public List<StockOptionStrategy> findByBrandIsInToSell(Collection<StockOptionStrategy> stockOptions, String brand);
 
 }

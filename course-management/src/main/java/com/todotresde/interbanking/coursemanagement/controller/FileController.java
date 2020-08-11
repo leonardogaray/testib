@@ -81,4 +81,10 @@ public class FileController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
+
+    @GetMapping("/service/simulate/generateCSV/{filename:.+}")
+    public ResponseEntity<?> generateCSV(@PathVariable String filename) {
+        fileUploadService.generateCSV(filename);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 }

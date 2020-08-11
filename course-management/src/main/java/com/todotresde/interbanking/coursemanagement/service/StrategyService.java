@@ -35,5 +35,5 @@ public interface StrategyService {
      * @param strategy     the strategy
      * @param stockOptions the stock options
      */
-    public void sellStockOptions(Strategy strategy, List<StockOption> stockOptions);
+    public void sellStockOptions(Strategy strategy, List<StockOption> stockOptions, Boolean forceCell);
 }

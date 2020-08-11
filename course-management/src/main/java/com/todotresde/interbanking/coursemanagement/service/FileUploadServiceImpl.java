@@ -1,12 +1,20 @@
 package com.todotresde.interbanking.coursemanagement.service;
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Stream;
 
+import com.todotresde.interbanking.coursemanagement.commons.CSVUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -66,6 +74,44 @@ public class FileUploadServiceImpl implements FileUploadService {
             return Files.walk(this.root, 1).filter(path -> !path.equals(this.root)).map(this.root::relativize);
         } catch (IOException e) {
             throw new RuntimeException("Could not load the files!");
+        }
+    }
+
+    @Override
+    public void generateCSV(String filename){
+        Path file = root.resolve(filename);
+        FileSystemUtils.deleteRecursively(file.toFile());
+
+        HashMap<String, Float> stockOptions = new HashMap<>();
+        stockOptions.put("YPF", 200f);
+        //stockOptions.put("TS", 10f);
+        //stockOptions.put("GGAL", 280f);
+
+        try {
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file.toString()), StandardCharsets.UTF_8);
+            CSVUtils.writeLine(writer, Arrays.asList("Acción", "Fecha", "Precio"));
+            Date initialDate = new Date();
+            for(int i = 0; i < 100; i++) {
+                for (Map.Entry<String, Float> entry : stockOptions.entrySet()) {
+                    String stockOption = entry.getKey();
+
+                    Float max = entry.getValue() * 0.1f;
+                    Float stockOptionValue = entry.getValue() + ((float) Math.random() * max) ;
+
+                    DateFormat formatter = new SimpleDateFormat("d/M/y");
+                    CSVUtils.writeLine(writer, Arrays.asList(stockOption, formatter.format(initialDate), "$" + String.format("%.02f", stockOptionValue)));
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(initialDate);
+                calendar.add(Calendar.DATE, 1);
+
+                initialDate = calendar.getTime();
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

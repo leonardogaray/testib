@@ -9,12 +9,16 @@ import java.time.format.DateTimeFormatter;
  * The type Stock option strategy.
  */
 @Data
-public class StockOptionStrategy {
+public class StockOptionStrategy implements Comparable<StockOptionStrategy>{
     private Integer count;
     private String brand;
+    private Float previousBuyPrice;
     private Float buyPrice;
+    private Float previousSellPrice;
     private Float sellPrice;
+    private LocalDate previousBuyDate;
     private LocalDate buyDate;
+    private LocalDate previousSellDate;
     private LocalDate sellDate;
 
     /**
@@ -29,4 +33,9 @@ public class StockOptionStrategy {
         this.buyPrice = stockOption.getPrice();
         this.buyDate = stockOption.getDate();
     }
+    @Override
+    public int compareTo(StockOptionStrategy stockOptionStrategy) {
+        return getBuyDate().compareTo(stockOptionStrategy.getBuyDate());
+    }
+
 }

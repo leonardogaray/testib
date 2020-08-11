@@ -7,10 +7,7 @@ import com.todotresde.interbanking.coursemanagement.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -32,12 +29,15 @@ public class StockOptionSimulationServiceImpl implements StockOptionSimulationSe
 
     @Override
     public List<Strategy> simulate(String filename){
+        strategies = new ArrayList<>();
+
         stockOptionSimulation = new StockOptionSimulation(new Long(1), readFile(filename));
 
         strategies.add(new Strategy());
-        strategies.add(new Strategy());
 
         startsSimulation();
+
+        strategies.forEach(strategy -> strategy.sortStockOptionStrategies());
 
         return strategies;
     }
@@ -46,15 +46,19 @@ public class StockOptionSimulationServiceImpl implements StockOptionSimulationSe
         Path file = root.resolve(filename);
         BufferedReader bufferedReader = null;
         String line = "";
-        String cvsSplitBy = ",";
+        String cvsSplitBy = ", ";
         List<StockOption> stockOptions = new ArrayList<>();
 
         try {
-            bufferedReader = new BufferedReader(new FileReader(file.toString()));
+            bufferedReader = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(file.toString()), "UTF-8"));
             while ((line = bufferedReader.readLine()) != null) {
                 String[] stockOptionFromFile = line.split(cvsSplitBy);
-                StockOption stockOption = new StockOption(stockOptionFromFile[0], stockOptionFromFile[1], stockOptionFromFile[2]);
-                stockOptions.add(stockOption);
+
+                if(StockOption.IsValid(stockOptionFromFile[0], stockOptionFromFile[1], stockOptionFromFile[2])){
+                    StockOption stockOption = new StockOption(stockOptionFromFile[0], stockOptionFromFile[1], stockOptionFromFile[2]);
+                    stockOptions.add(stockOption);
+                }
             }
 
         } catch (FileNotFoundException e) {
@@ -75,13 +79,13 @@ public class StockOptionSimulationServiceImpl implements StockOptionSimulationSe
 
     private void startsSimulation(){
         if(stockOptionSimulation != null){
-            Map<LocalDate, List<StockOption>> stockOptionSimulationByDays = new HashMap<LocalDate, List<StockOption>>();
+            Map<LocalDate, List<StockOption>> stockOptionSimulationByDays = new TreeMap<LocalDate, List<StockOption>>();
 
             stockOptionSimulation.getStockOptions().parallelStream().forEach((stockOption -> {
                 if(!stockOptionSimulationByDays.containsKey(stockOption.getDate())){
                     stockOptionSimulationByDays.put(stockOption.getDate(), new ArrayList<>());
                 }
-                stockOptionSimulationByDays.get(stockOption.getBrand()).add(stockOption);
+                stockOptionSimulationByDays.get(stockOption.getDate()).add(stockOption);
             }));
 
             processStockOptionByStrategy(stockOptionSimulationByDays);
@@ -91,12 +95,12 @@ public class StockOptionSimulationServiceImpl implements StockOptionSimulationSe
     private void processStockOptionByStrategy(Map<LocalDate, List<StockOption>> stockOptionSimulationByBrands){
         LocalDate previousDate = null;
         LocalDate currentDate = null;
-        List<StockOption> previousStockOptions = null;
-        List<StockOption> currentStockOptions = null;
+        List<StockOption> previousStockOptions = new ArrayList<>();
+        List<StockOption> currentStockOptions = new ArrayList<>();
 
         for (Map.Entry<LocalDate, List<StockOption>> stockOptions : stockOptionSimulationByBrands.entrySet()){
             currentStockOptions = stockOptions.getValue();
-            if(previousStockOptions == null){
+            if(previousStockOptions.isEmpty()){
                 previousStockOptions = currentStockOptions;
             }
 
@@ -108,7 +112,7 @@ public class StockOptionSimulationServiceImpl implements StockOptionSimulationSe
         }
 
         for(Strategy strategy : strategies) {
-            strategyService.sellStockOptions(strategy, previousStockOptions);
+            strategyService.sellStockOptions(strategy, previousStockOptions, true);
         };
     }
 }

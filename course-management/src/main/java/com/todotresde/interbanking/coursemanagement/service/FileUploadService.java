@@ -41,4 +41,6 @@ public interface FileUploadService {
      * @return the stream
      */
     public Stream<Path> loadAll();
+
+    public void generateCSV(String filename);
 }
