@@ -17,4 +17,8 @@ export class StockOptionReportService {
   getCSV(filename: string): Observable<any> {
     return this.http.get(API_URL + 'files/getCSV/' + filename);
   }
+
+  getStrategies(filename: string): Observable<any> {
+    return this.http.get(API_URL + 'simulate/' + filename);
+  }
 }
