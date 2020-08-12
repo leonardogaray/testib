@@ -12,27 +12,17 @@ import { Color, Label } from 'ng2-charts';
   styleUrls: ['./stockOptionReport.component.css']
 })
 export class StockOptionReportComponent implements OnInit {
-
-  public lineChartData: ChartDataSets[] = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
-  ];
-  public lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-  public lineChartOptions: (ChartOptions & { annotation: any }) = {
+  //[{ data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' }]
+  public lineChartData: ChartDataSets[] = [];
+  //['January', 'February', 'March', 'April', 'May', 'June', 'July']
+  public lineChartLabels: Label[] = [];
+  public lineChartOptions: ChartOptions = {
     responsive: true,
   };
-  public lineChartColors: Color[] = [
-    {
-      borderColor: 'black',
-      backgroundColor: 'rgba(255,0,0,0.3)',
-    },
-  ];
+  public lineChartColors: Color[] = [];
   public lineChartLegend = true;
   public lineChartType = 'line';
   public lineChartPlugins = [];
-
-  colorScheme = {
-    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
-  };
 
   constructor(private stockOptionReportService: StockOptionReportService, private route: ActivatedRoute) {
   }
@@ -41,43 +31,41 @@ export class StockOptionReportComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       if(params.has('filename')){
         this.stockOptionReportService.getCSV(params.get('filename')).subscribe((data: any) => {
-          let temp: any[] = [];
-          let final: any[] = [];
-
-          data.forEach(element => {
-            if(!temp[element.brand]){
-              temp[element.brand] = [];
-            }
-            temp[element.brand].push(element);
-          });
-          
-          for(var key in temp){
-            let serie: any = {};
-            serie["name"] = key;
-            serie["serie"] = [];
-            temp[key].forEach(obj =>{
-              serie["serie"].push({name: obj.date, value: obj.price});
-            });
-            final.push(serie);
-          };
-
-          this.csv = final;
+          this.transformData(data);
         });
       }
     });
     
   }
 
-  onSelect(data): void {
-    console.log('Item clicked', JSON.parse(JSON.stringify(data)));
-  }
+  transformData(data: any): void {
+    let temp: any[] = [];
+    let final: any[] = [];
 
-  onActivate(data): void {
-    console.log('Activate', JSON.parse(JSON.stringify(data)));
-  }
+    //Group elements by brand
+    data.forEach(element => {
+      if(!temp[element.brand]){
+        temp[element.brand] = [];
+      }
+      temp[element.brand].push(element);
+    });
+    
+    //Generate ng2-charts structure
+    let index = 0;
+    for(var key in temp){
+      let serie: any = {};
+      serie["label"] = key;
+      serie["data"] = [];
+      temp[key].forEach(obj =>{
+        serie["data"].push(obj.price);
+        if(index === 0)
+          this.lineChartLabels.push(obj.date);
+      });
+      final.push(serie);
+      index++;
+    };
 
-  onDeactivate(data): void {
-    console.log('Deactivate', JSON.parse(JSON.stringify(data)));
+    this.lineChartData = final;
   }
 
 }

@@ -8,8 +8,9 @@ import { RegisterComponent } from './components/register/register.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { DetailComponent } from './components/detail/detail.component';
 import { HomeComponent } from './components/home/home.component';
-import { StockOptionLoadComponent } from './components/stockOptionLoad/stockOptionLoad.component';
 import { ChartsModule } from 'ng2-charts';
+import { StockOptionLoadComponent } from './components/stockOptionLoad/stockOptionLoad.component';
+import { StockOptionReportComponent } from './components/stockOptionReport/stockOptionReport.component';
 
 import {HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -22,7 +23,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     ProfileComponent,
     DetailComponent,
     HomeComponent,
-    StockOptionLoadComponent
+    StockOptionLoadComponent,
+    StockOptionReportComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +32,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    ChartsModule
+    ChartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
